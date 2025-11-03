@@ -1,200 +1,90 @@
----
 # For reference on model card metadata, see the spec: https://github.com/huggingface/hub-docs/blob/main/modelcard.md?plain=1
 # Doc / guide: https://huggingface.co/docs/hub/model-cards
-{{ card_data }}
+---
+tags:
+- classification
+- breast-cancer
+- medical
+- tabular-data
+- mlflow
+datasets:
+- breast-cancer-wisconsin # Asunción basada en el contexto médico
+library_name: scikit-learn # Asunción, común para clasificación inicial. Si es otro, debe ser actualizado.
+license: mit
 ---
 
-# Model Card for {{ model_id | default("Model ID", true) }}
+# Model Card for Modelo_Clasificacion_Cancer_Mama
 
-<!-- Provide a quick summary of what the model is/does. -->
-
-{{ model_summary | default("", true) }}
+Modelo de Machine Learning entrenado para la **clasificación binaria** de tumores de cáncer de mama. Su propósito es clasificar una muestra de tejido como **Benigno** o **Maligno** basado en las características celulares.
 
 ## Model Details
 
 ### Model Description
 
-<!-- Provide a longer summary of what this model is. -->
+Este modelo es un prototipo inicial desarrollado para la tarea de clasificación diagnóstica de cáncer de mama. Fue entrenado para predecir si un tumor es maligno o benigno a partir de características tabulares extraídas del análisis celular. El entrenamiento fue rastreado usando **MLflow**.
 
-{{ model_description | default("", true) }}
-
-- **Developed by:** {{ developers | default("[More Information Needed]", true)}}
-- **Funded by [optional]:** {{ funded_by | default("[More Information Needed]", true)}}
-- **Shared by [optional]:** {{ shared_by | default("[More Information Needed]", true)}}
-- **Model type:** {{ model_type | default("[More Information Needed]", true)}}
-- **Language(s) (NLP):** {{ language | default("[More Information Needed]", true)}}
-- **License:** {{ license | default("[More Information Needed]", true)}}
-- **Finetuned from model [optional]:** {{ base_model | default("[More Information Needed]", true)}}
+- **Developed by:** [More Information Needed]
+- **Funded by [optional]:** [More Information Needed]
+- **Shared by [optional]:** [More Information Needed]
+- **Model type:** Classification Model (Tipo específico: [Ej. Logistic Regression / Random Forest / SVM])
+- **Language(s) (NLP):** [N/A - Datos Numéricos/Tabulares]
+- **License:** MIT
+- **Finetuned from model [optional]:** [N/A]
 
 ### Model Sources [optional]
 
-<!-- Provide the basic links for the model. -->
-
-- **Repository:** {{ repo | default("[More Information Needed]", true)}}
-- **Paper [optional]:** {{ paper | default("[More Information Needed]", true)}}
-- **Demo [optional]:** {{ demo | default("[More Information Needed]", true)}}
+- **Repository:** [More Information Needed]
+- **Paper [optional]:** [More Information Needed]
+- **Demo [optional]:** El modelo está publicado en un *Serving Endpoint* de Databricks para inferencia.
 
 ## Uses
 
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
-
 ### Direct Use
 
-<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
-
-{{ direct_use | default("[More Information Needed]", true)}}
+El uso principal es la **investigación** y **prueba de concepto (Proof of Concept)** en el área de la oncología o el *Machine Learning* aplicado a la salud, para evaluar la viabilidad de la clasificación de cáncer de mama con modelos ML.
 
 ### Downstream Use [optional]
 
-<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
-
-{{ downstream_use | default("[More Information Needed]", true)}}
+Podría integrarse en una herramienta más grande de apoyo a la decisión clínica, pero solo después de una validación exhaustiva y bajo estricta supervisión regulatoria.
 
 ### Out-of-Scope Use
 
-<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
-
-{{ out_of_scope_use | default("[More Information Needed]", true)}}
+**USO CRÍTICO FUERA DE ALCANCE:** **NO DEBE UTILIZARSE BAJO NINGUNA CIRCUNSTANCIA PARA DIAGNÓSTICO MÉDICO O TRATAMIENTO DIRECTO EN HUMANOS.** El modelo es un prototipo con un dataset limitado y no sustituye el juicio de un profesional médico calificado. Su uso irresponsable puede llevar a un diagnóstico erróneo con graves consecuencias.
 
 ## Bias, Risks, and Limitations
 
-<!-- This section is meant to convey both technical and sociotechnical limitations. -->
-
-{{ bias_risks_limitations | default("[More Information Needed]", true)}}
+El riesgo y la limitación más significativos es el **tamaño limitado del dataset de entrenamiento (455 muestras)**. Esto puede resultar en:
+1.  **Baja Capacidad de Generalización:** El modelo podría estar sobreajustado y fallar al aplicarse a poblaciones o datos con distribuciones diferentes.
+2.  **Sesgo de Muestreo:** Si el dataset original proviene de una región o un subgrupo demográfico específico, el modelo puede exhibir un rendimiento sesgado en otros grupos.
+3.  **Dependencia del Endpoint:** El código de inferencia depende de un *Serving Endpoint* específico de Databricks, incluyendo una URL y un token de acceso, lo que añade complejidad operacional y de seguridad.
 
 ### Recommendations
 
-<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
-
-{{ bias_recommendations | default("Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.", true)}}
+Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. **Se recomienda encarecidamente aumentar el tamaño del conjunto de datos de entrenamiento** a miles de muestras para mejorar la solidez y la capacidad de generalización del modelo.
 
 ## How to Get Started with the Model
 
-Use the code below to get started with the model.
+Utilice la siguiente estructura de código para realizar la inferencia. **Recuerde no exponer la URL y el token en código plano.**
 
-{{ get_started_code | default("[More Information Needed]", true)}}
+```python
+import pandas as pd
+import requests
+import json
+# ... (función create_tf_serving_json si el formato de entrada no es pandas)
 
-## Training Details
-
-### Training Data
-
-<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
-
-{{ training_data | default("[More Information Needed]", true)}}
-
-### Training Procedure
-
-<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
-
-#### Preprocessing [optional]
-
-{{ preprocessing | default("[More Information Needed]", true)}}
-
-
-#### Training Hyperparameters
-
-- **Training regime:** {{ training_regime | default("[More Information Needed]", true)}} <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
-
-#### Speeds, Sizes, Times [optional]
-
-<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
-
-{{ speeds_sizes_times | default("[More Information Needed]", true)}}
-
-## Evaluation
-
-<!-- This section describes the evaluation protocols and provides the results. -->
-
-### Testing Data, Factors & Metrics
-
-#### Testing Data
-
-<!-- This should link to a Dataset Card if possible. -->
-
-{{ testing_data | default("[More Information Needed]", true)}}
-
-#### Factors
-
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
-
-{{ testing_factors | default("[More Information Needed]", true)}}
-
-#### Metrics
-
-<!-- These are the evaluation metrics being used, ideally with a description of why. -->
-
-{{ testing_metrics | default("[More Information Needed]", true)}}
-
-### Results
-
-{{ results | default("[More Information Needed]", true)}}
-
-#### Summary
-
-{{ results_summary | default("", true) }}
-
-## Model Examination [optional]
-
-<!-- Relevant interpretability work for the model goes here -->
-
-{{ model_examination | default("[More Information Needed]", true)}}
-
-## Environmental Impact
-
-<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
-
-Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
-
-- **Hardware Type:** {{ hardware_type | default("[More Information Needed]", true)}}
-- **Hours used:** {{ hours_used | default("[More Information Needed]", true)}}
-- **Cloud Provider:** {{ cloud_provider | default("[More Information Needed]", true)}}
-- **Compute Region:** {{ cloud_region | default("[More Information Needed]", true)}}
-- **Carbon Emitted:** {{ co2_emitted | default("[More Information Needed]", true)}}
-
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-{{ model_specs | default("[More Information Needed]", true)}}
-
-### Compute Infrastructure
-
-{{ compute_infrastructure | default("[More Information Needed]", true)}}
-
-#### Hardware
-
-{{ hardware_requirements | default("[More Information Needed]", true)}}
-
-#### Software
-
-{{ software | default("[More Information Needed]", true)}}
-
-## Citation [optional]
-
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
-
-**BibTeX:**
-
-{{ citation_bibtex | default("[More Information Needed]", true)}}
-
-**APA:**
-
-{{ citation_apa | default("[More Information Needed]", true)}}
-
-## Glossary [optional]
-
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
-
-{{ glossary | default("[More Information Needed]", true)}}
-
-## More Information [optional]
-
-{{ more_information | default("[More Information Needed]", true)}}
-
-## Model Card Authors [optional]
-
-{{ model_card_authors | default("[More Information Needed]", true)}}
-
-## Model Card Contact
-
-{{ model_card_contact | default("[More Information Needed]", true)}}
+def score_model(dataset):
+    # La URL y el token deben ser obtenidos de variables de entorno (secrets)
+    url = '[https://dbc-c588324d-9eb4.cloud.databricks.com/serving-endpoints/CANCER_DE_MAMA/invocations](https://dbc-c588324d-9eb4.cloud.databricks.com/serving-endpoints/CANCER_DE_MAMA/invocations)' 
+    headers = {'Authorization': f'Bearer {YOUR_SECRET_TOKEN}', 'Content-Type': 'application/json'}
+    
+    # Prepara el dataset de entrada
+    ds_dict = {'dataframe_split': dataset.to_dict(orient='split')} 
+    data_json = json.dumps(ds_dict, allow_nan=True)
+    
+    # Envía la solicitud al endpoint
+    response = requests.request(method='POST', headers=headers, url=url, data=data_json)
+    
+    if response.status_code != 200:
+        raise Exception(f'Request failed with status {response.status_code}, {response.text}')
+    
+    return response.json()
