@@ -1,200 +1,102 @@
 ---
-# For reference on model card metadata, see the spec: https://github.com/huggingface/hub-docs/blob/main/modelcard.md?plain=1
-# Doc / guide: https://huggingface.co/docs/hub/model-cards
-{{ card_data }}
+language: en
+tags:
+- breast-cancer
+- classification
+- random-forest
+- medical-ai
+- sklearn
+datasets:
+- breast-cancer-wisconsin
 ---
 
-# Model Card for {{ model_id | default("Model ID", true) }}
+# Model Card for CANCER_DE_MAMA
 
-<!-- Provide a quick summary of what the model is/does. -->
-
-{{ model_summary | default("", true) }}
+**CANCER_DE_MAMA** es un modelo de machine learning basado en Random Forest diseñado para clasificar tumores de mama como benignos o malignos utilizando características médicas extraídas de imágenes de biopsias.
 
 ## Model Details
 
 ### Model Description
 
-<!-- Provide a longer summary of what this model is. -->
+Este modelo utiliza un clasificador Random Forest entrenado con el dataset de cáncer de mama de scikit-learn para predecir si un tumor es benigno o maligno basándose en 30 características diferentes extraídas de imágenes digitalizadas de muestras de tumores.
 
-{{ model_description | default("", true) }}
+- **Developed by:** Daniel Siguencia Castro
+- **Funded by:** Proyecto académico/educativo
+- **Shared by:** Daniel Siguencia Castro
+- **Model type:** Random Forest Classifier
+- **Language(s):** Python
+- **License:** MIT
+- **Finetuned from model:** Modelo base de scikit-learn RandomForestClassifier
 
-- **Developed by:** {{ developers | default("[More Information Needed]", true)}}
-- **Funded by [optional]:** {{ funded_by | default("[More Information Needed]", true)}}
-- **Shared by [optional]:** {{ shared_by | default("[More Information Needed]", true)}}
-- **Model type:** {{ model_type | default("[More Information Needed]", true)}}
-- **Language(s) (NLP):** {{ language | default("[More Information Needed]", true)}}
-- **License:** {{ license | default("[More Information Needed]", true)}}
-- **Finetuned from model [optional]:** {{ base_model | default("[More Information Needed]", true)}}
+### Model Sources
 
-### Model Sources [optional]
-
-<!-- Provide the basic links for the model. -->
-
-- **Repository:** {{ repo | default("[More Information Needed]", true)}}
-- **Paper [optional]:** {{ paper | default("[More Information Needed]", true)}}
-- **Demo [optional]:** {{ demo | default("[More Information Needed]", true)}}
+- **Repository:** [Enlace a tu repositorio de GitHub si tienes]
+- **Paper:** Breast Cancer Wisconsin (Diagnostic) Dataset - UCI Machine Learning Repository
+- **Demo:** Disponible a través de endpoint en Databricks
 
 ## Uses
 
-<!-- Address questions around how the model is intended to be used, including the foreseeable users of the model and those affected by the model. -->
-
 ### Direct Use
 
-<!-- This section is for the model use without fine-tuning or plugging into a larger ecosystem/app. -->
+Este modelo está diseñado para:
+- Clasificación binaria de tumores de mama (benigno vs maligno)
+- Herramienta de apoyo para diagnóstico médico
+- Investigación y educación en machine learning aplicado a la salud
 
-{{ direct_use | default("[More Information Needed]", true)}}
+### Downstream Use
 
-### Downstream Use [optional]
-
-<!-- This section is for the model use when fine-tuned for a task, or when plugged into a larger ecosystem/app -->
-
-{{ downstream_use | default("[More Information Needed]", true)}}
+- Integración en sistemas de diagnóstico asistido
+- Análisis de características importantes para el cáncer de mama
+- Benchmark para comparar otros modelos de clasificación
 
 ### Out-of-Scope Use
 
-<!-- This section addresses misuse, malicious use, and uses that the model will not work well for. -->
-
-{{ out_of_scope_use | default("[More Information Needed]", true)}}
+- ❌ **NO** debe usarse como único método de diagnóstico médico
+- ❌ **NO** reemplaza la evaluación de profesionales médicos
+- ❌ **NO** apto para diagnóstico en producción sin validación clínica
+- ❌ **NO** debe usarse con datos de diferentes fuentes sin reentrenamiento
 
 ## Bias, Risks, and Limitations
 
-<!-- This section is meant to convey both technical and sociotechnical limitations. -->
+### Limitaciones Técnicas:
+- Entrenado únicamente con el dataset Wisconsin Breast Cancer
+- No incluye datos demográficos de pacientes
+- Limitado a las 30 características del dataset original
+- Precisión del 95.6% - existe margen de error
 
-{{ bias_risks_limitations | default("[More Information Needed]", true)}}
+### Consideraciones Éticas:
+- Falsos negativos podrían tener consecuencias graves
+- Falsos positivos podrían causar ansiedad innecesaria
+- El modelo no considera factores clínicos adicionales
 
 ### Recommendations
 
-<!-- This section is meant to convey recommendations with respect to the bias, risk, and technical limitations. -->
-
-{{ bias_recommendations | default("Users (both direct and downstream) should be made aware of the risks, biases and limitations of the model. More information needed for further recommendations.", true)}}
+- **Uso recomendado:** Solo como herramienta de apoyo educativo y de investigación
+- **Validación:** Siempre validar predicciones con profesionales médicos
+- **Transparencia:** Comunicar claramente las limitaciones del modelo
+- **Auditoría:** Realizar pruebas regulares de rendimiento y sesgos
 
 ## How to Get Started with the Model
 
-Use the code below to get started with the model.
+```python
+# Cargar el modelo desde MLflow
+import mlflow.pyfunc
 
-{{ get_started_code | default("[More Information Needed]", true)}}
+model = mlflow.pyfunc.load_model("models:/CANCER_DE_MAMA/1")
 
-## Training Details
+# Realizar predicción
+import pandas as pd
+import numpy as np
 
-### Training Data
+# Ejemplo de datos de entrada
+sample_data = {
+    'mean radius': [13.5],
+    'mean texture': [21.2],
+    'mean perimeter': [88.0],
+    'mean area': [559.0],
+    'mean smoothness': [0.129]
+}
 
-<!-- This should link to a Dataset Card, perhaps with a short stub of information on what the training data is all about as well as documentation related to data pre-processing or additional filtering. -->
-
-{{ training_data | default("[More Information Needed]", true)}}
-
-### Training Procedure
-
-<!-- This relates heavily to the Technical Specifications. Content here should link to that section when it is relevant to the training procedure. -->
-
-#### Preprocessing [optional]
-
-{{ preprocessing | default("[More Information Needed]", true)}}
-
-
-#### Training Hyperparameters
-
-- **Training regime:** {{ training_regime | default("[More Information Needed]", true)}} <!--fp32, fp16 mixed precision, bf16 mixed precision, bf16 non-mixed precision, fp16 non-mixed precision, fp8 mixed precision -->
-
-#### Speeds, Sizes, Times [optional]
-
-<!-- This section provides information about throughput, start/end time, checkpoint size if relevant, etc. -->
-
-{{ speeds_sizes_times | default("[More Information Needed]", true)}}
-
-## Evaluation
-
-<!-- This section describes the evaluation protocols and provides the results. -->
-
-### Testing Data, Factors & Metrics
-
-#### Testing Data
-
-<!-- This should link to a Dataset Card if possible. -->
-
-{{ testing_data | default("[More Information Needed]", true)}}
-
-#### Factors
-
-<!-- These are the things the evaluation is disaggregating by, e.g., subpopulations or domains. -->
-
-{{ testing_factors | default("[More Information Needed]", true)}}
-
-#### Metrics
-
-<!-- These are the evaluation metrics being used, ideally with a description of why. -->
-
-{{ testing_metrics | default("[More Information Needed]", true)}}
-
-### Results
-
-{{ results | default("[More Information Needed]", true)}}
-
-#### Summary
-
-{{ results_summary | default("", true) }}
-
-## Model Examination [optional]
-
-<!-- Relevant interpretability work for the model goes here -->
-
-{{ model_examination | default("[More Information Needed]", true)}}
-
-## Environmental Impact
-
-<!-- Total emissions (in grams of CO2eq) and additional considerations, such as electricity usage, go here. Edit the suggested text below accordingly -->
-
-Carbon emissions can be estimated using the [Machine Learning Impact calculator](https://mlco2.github.io/impact#compute) presented in [Lacoste et al. (2019)](https://arxiv.org/abs/1910.09700).
-
-- **Hardware Type:** {{ hardware_type | default("[More Information Needed]", true)}}
-- **Hours used:** {{ hours_used | default("[More Information Needed]", true)}}
-- **Cloud Provider:** {{ cloud_provider | default("[More Information Needed]", true)}}
-- **Compute Region:** {{ cloud_region | default("[More Information Needed]", true)}}
-- **Carbon Emitted:** {{ co2_emitted | default("[More Information Needed]", true)}}
-
-## Technical Specifications [optional]
-
-### Model Architecture and Objective
-
-{{ model_specs | default("[More Information Needed]", true)}}
-
-### Compute Infrastructure
-
-{{ compute_infrastructure | default("[More Information Needed]", true)}}
-
-#### Hardware
-
-{{ hardware_requirements | default("[More Information Needed]", true)}}
-
-#### Software
-
-{{ software | default("[More Information Needed]", true)}}
-
-## Citation [optional]
-
-<!-- If there is a paper or blog post introducing the model, the APA and Bibtex information for that should go in this section. -->
-
-**BibTeX:**
-
-{{ citation_bibtex | default("[More Information Needed]", true)}}
-
-**APA:**
-
-{{ citation_apa | default("[More Information Needed]", true)}}
-
-## Glossary [optional]
-
-<!-- If relevant, include terms and calculations in this section that can help readers understand the model or model card. -->
-
-{{ glossary | default("[More Information Needed]", true)}}
-
-## More Information [optional]
-
-{{ more_information | default("[More Information Needed]", true)}}
-
-## Model Card Authors [optional]
-
-{{ model_card_authors | default("[More Information Needed]", true)}}
-
-## Model Card Contact
-
-{{ model_card_contact | default("[More Information Needed]", true)}}
+df = pd.DataFrame(sample_data)
+prediction = model.predict(df)
+print(f"Predicción: {'BENIGNO' if prediction[0] == 1 else 'MALIGNO'}")
